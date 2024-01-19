@@ -27,7 +27,7 @@ public class User implements UserDetails {
   @JsonIgnore
   private String password;
   @Enumerated
-  @Column(name = "role_id")
+  @Column(name = "role")
   private Role role;
 
   @Override
