@@ -1,0 +1,9 @@
+services:
+
+  mysql:
+    image: mysql:8.0.33
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: Julia1770!
