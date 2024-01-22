@@ -17,7 +17,9 @@ import java.util.function.Function;
 @Component
 public class JwtTokenProvider {
 
-  private static final String SECRET_KEY = "DyepD0U3QzPmK9b0qNmLznHFs8/tT/a1zxXbdZiodpaGmpjpcxl+ni8CG2hql5qKcbf1QFgJl/25uIDtHjFELIrCfCvcf6ZvnB5hE8Wu8a9l4nNcAM+pl3Jpv3GYsK+lG0hB2+m9IgjFTCIm/53qWQN+gi3IZbUGP99ZCyJOP6trodmP6gPoO8stFl17hPRkatTef+Pbb0EHpPf9HPL4fxcG2TAL+TXI/E1IHb1+irbris6qYeQPiAVlmHeEpXNUYlQGb/WuI8Rkg4+jxoCJgW0MTyiehlb1U5cXosHoNFhU+k7YhZqOPdl66Wi2fexYPG2ze6wUhm+Bz7MTqW59TrxSAJWTIZYyvZhAfczwh60=";
+  @Value("${jwt.secret}")
+  private String SECRET_KEY;
+
   private final String ISSUER = "JULIA_BAPTISTA_ECOMMERCE_IN-PARTNERSHIP-WITH-ZALANDO";
 
   public String extractUserName(String token) {
