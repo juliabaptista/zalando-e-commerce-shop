@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@EnableJpaRepositories("de.zalando.model.repositories")
 @RestController
 @OpenAPIDefinition(info = @Info(
 		title = "Zalando E-commerce Shop",
