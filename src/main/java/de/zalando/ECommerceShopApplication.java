@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@EntityScan("de.zalando.model.entities")
 @EnableJpaRepositories("de.zalando.model.repositories")
 @RestController
 @OpenAPIDefinition(info = @Info(
