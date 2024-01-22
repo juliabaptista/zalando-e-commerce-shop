@@ -23,6 +23,12 @@ public class UserService implements UserDetailsService {
   UserRepository userRepository;
   PasswordEncoder passwordEncoder;
 
+  @Autowired
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
+
 public User getUserByEmail(String email) throws UserNotFoundException {
   Optional<User> optionalUser = userRepository.getUserByEmail(email);
   if (optionalUser.isPresent()) {
@@ -30,7 +36,6 @@ public User getUserByEmail(String email) throws UserNotFoundException {
   }
   else throw new UserNotFoundException("User not found!");
 }
-
 
   public UserRegistrationResponse registerUser(UserRegistrationRequest request)
       throws DuplicateUserException {
