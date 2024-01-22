@@ -6,9 +6,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +19,10 @@ public class JwtTokenProvider {
 
   @Value("${jwt.secret}")
   private String SECRET_KEY;
-
   private final String ISSUER = "JULIA_BAPTISTA_ECOMMERCE_IN-PARTNERSHIP-WITH-ZALANDO";
 
-  public String extractUserName(String token) {
+
+  public String extractUserEmail(String token) {
     return extractClaim(token, Claims::getSubject);
   }
 
@@ -31,17 +31,17 @@ public class JwtTokenProvider {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+  public String generateToken(String email) {
+    return createToken(new HashMap<>(), email);
   }
 
-  private String generateToken(
+  private String createToken(
       Map<String, Object> extraClaims,
-      UserDetails userDetails) {
+      String email) {
     return Jwts
         .builder()
         .setClaims(extraClaims)
-        .setSubject(userDetails.getUsername())
+        .setSubject(email)
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) //valid for 24hrs + 1000 milliseconds
         .setIssuer(ISSUER)
@@ -49,7 +49,7 @@ public class JwtTokenProvider {
   }
 
   public Boolean isTokenValid(String token, UserDetails userDetails) {
-    final String username = extractUserName(token);
+    final String username = extractUserEmail(token);
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
 
