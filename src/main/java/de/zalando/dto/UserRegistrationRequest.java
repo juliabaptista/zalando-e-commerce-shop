@@ -12,24 +12,20 @@ import lombok.*;
 @AllArgsConstructor
 public class UserRegistrationRequest {
 
-  @NotNull(message = "Required field. Cannot be null!")
   @NotEmpty(message = "Required field. Cannot be empty!")
   private String firstName;
 
-  @NotNull(message = "Required field. Cannot be null!")
   @NotEmpty(message = "Required field. Cannot be empty!")
   private String lastName;
 
   @Email(message = "Please, provide a valid email address!")
-  @NotNull(message = "Required field. Cannot be null!")
   @NotEmpty(message = "Required field. Cannot be empty!")
   private String email;
 
-  @NotNull(message = "Required field. Cannot be null!")
   @NotEmpty(message = "Required field. Cannot be empty!")
   @Size(min = 6, message = "Password must be at least 6 characters long")
   private String password;
 
-  @NotNull(message = "Required field. Cannot be null!")
+  @NotEmpty(message = "Required field. Cannot be empty!")
   private Role role;
 }
