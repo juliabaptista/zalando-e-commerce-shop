@@ -29,8 +29,11 @@ public class UserController {
   JwtTokenProvider jwtTokenProvider;
 
   @Autowired
-  public UserController(UserService userService) {
+  public UserController(UserService userService, AuthenticationManager authenticationManager,
+      JwtTokenProvider jwtTokenProvider) {
     this.userService = userService;
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenProvider = jwtTokenProvider;
   }
 
   @PostMapping("/register")
@@ -50,6 +53,9 @@ public class UserController {
   public ResponseEntity<?> login(
       @RequestBody LoginRequest loginRequest
   ) {
+    if (!userService.isEmailRegistered(loginRequest.getEmail())) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Email not registered.");
+    }
     try {
       authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
