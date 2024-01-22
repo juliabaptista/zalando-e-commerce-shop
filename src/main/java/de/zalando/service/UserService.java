@@ -59,7 +59,7 @@ public User getUserByEmail(String email) throws UserNotFoundException {
         savedUser.getRole());
   }
 
-  private boolean isEmailRegistered(String email) {
+  public boolean isEmailRegistered(String email) {
     Optional<User> optionalUser = userRepository.getUserByEmail(email);
     return optionalUser.isPresent();
   }
