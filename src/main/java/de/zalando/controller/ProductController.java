@@ -1,15 +1,12 @@
 package de.zalando.controller;
 
+import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
-import de.zalando.model.entities.User;
 import de.zalando.service.ProductService;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -40,15 +37,11 @@ public class ProductController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> getProductById(
-      @PathVariable("id") Long productId
-  ){
+  public ResponseEntity<?> getProductById(@PathVariable("id") Long productId){
     try{
       return ResponseEntity.ok(productService.getProductById(productId));
     }catch (ProductNotFoundException e){
-      return ResponseEntity
-          .status(HttpStatus.NOT_FOUND)
-          .body("Product not found.");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 
