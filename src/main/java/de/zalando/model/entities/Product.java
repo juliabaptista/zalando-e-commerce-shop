@@ -1,10 +1,13 @@
 package de.zalando.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -32,4 +35,17 @@ public class Product {
   @Column(name = "stock")
   private int stockQuantity;
 
+  @JsonIgnore
+  @ManyToOne
+  @JoinColumn(name = "admin")
+  private User admin;
+
+  public Product(String productName, String productDescription, double productPrice,
+      int stockQuantity, User admin) {
+    this.productName = productName;
+    this.productDescription = productDescription;
+    this.productPrice = productPrice;
+    this.stockQuantity = stockQuantity;
+    this.admin = admin;
+  }
 }
