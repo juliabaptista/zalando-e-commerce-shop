@@ -6,6 +6,8 @@ import de.zalando.model.repositories.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,7 +23,12 @@ public class ProductService {
     this.productRepository = productRepository;
   }
 
-  public Product getProductByProductId(Long productId) throws ProductNotFoundException {
+  public Page<Product> getAllByArchivedIsFalse(int page, int size) {
+    return productRepository.getAllByArchivedIsFalse(
+        PageRequest.of(page, size));
+  }
+
+  public Product getProductByProductIdAndArchivedIsFalse(Long productId) throws ProductNotFoundException {
     Optional<Product> optionalProduct = productRepository.findById(productId);
     if (optionalProduct.isPresent()) {
       return optionalProduct.get();
