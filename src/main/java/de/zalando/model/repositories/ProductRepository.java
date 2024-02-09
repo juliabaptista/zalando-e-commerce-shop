@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-  Optional<Product> getProductByProductId(Long productId);
+  Optional<Product> getProductByProductIdAndArchivedIsFalse(Long productId);
+  Page<Product> getAllByArchivedIsFalse(Pageable pageable);
 }
