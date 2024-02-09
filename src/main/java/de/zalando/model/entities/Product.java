@@ -34,6 +34,8 @@ public class Product {
   private double productPrice;
   @Column(name = "stock")
   private int stockQuantity;
+  @Column(name = "is_archived")
+  private boolean archived;
 
   @JsonIgnore
   @ManyToOne
