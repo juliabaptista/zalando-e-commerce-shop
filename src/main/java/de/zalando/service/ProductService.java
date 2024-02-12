@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,8 +25,19 @@ public class ProductService {
   }
 
   public Page<Product> getAllByArchivedIsFalse(int page, int size) {
-    return productRepository.getAllByArchivedIsFalse(
-        PageRequest.of(page, size));
+    PageRequest request = PageRequest.of(page, size);
+    return productRepository.getAllByArchivedIsFalse(request);
+  }
+
+  public Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(String keyword, int page, int size)
+      throws ProductNotFoundException {
+    PageRequest request = PageRequest.of(page, size);
+    Page<Product> products = productRepository.getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(keyword, request);
+    if (products.isEmpty()) {
+      throw new ProductNotFoundException("No products found with the keyword: " + keyword);
+    } else {
+      return products;
+    }
   }
 
   public Product getProductByProductIdAndArchivedIsFalse(Long productId) throws ProductNotFoundException {

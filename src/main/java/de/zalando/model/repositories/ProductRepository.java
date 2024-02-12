@@ -13,4 +13,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   Optional<Product> getProductByProductIdAndArchivedIsFalse(Long productId);
   Page<Product> getAllByArchivedIsFalse(Pageable pageable);
+  Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase (String productName, Pageable pageable);
 }
