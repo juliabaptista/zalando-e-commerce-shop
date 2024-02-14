@@ -25,4 +25,6 @@ public class User {
   @Enumerated
   @Column(name = "role")
   private Role role;
+  @Column(name = "is_archived", columnDefinition = "false")
+  private boolean archived;
 }
