@@ -1,5 +1,6 @@
 package de.zalando.service;
 
+import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
 import de.zalando.model.repositories.ProductRepository;
@@ -29,10 +30,12 @@ public class ProductService {
     return productRepository.getAllByArchivedIsFalse(request);
   }
 
-  public Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(String keyword, int page, int size)
+  public Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(String keyword,
+      int page, int size)
       throws ProductNotFoundException {
     PageRequest request = PageRequest.of(page, size);
-    Page<Product> products = productRepository.getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(keyword, request);
+    Page<Product> products = productRepository.getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(
+        keyword, request);
     if (products.isEmpty()) {
       throw new ProductNotFoundException("No products found with the keyword: " + keyword);
     } else {
@@ -40,11 +43,22 @@ public class ProductService {
     }
   }
 
-  public Product getProductByProductIdAndArchivedIsFalse(Long productId) throws ProductNotFoundException {
+  public Product getProductByProductIdAndArchivedIsFalse(Long productId)
+      throws ProductNotFoundException {
     Optional<Product> optionalProduct = productRepository.findById(productId);
     if (optionalProduct.isPresent()) {
       return optionalProduct.get();
-    } else throw new ProductNotFoundException("Product not found.");
+    } else {
+      throw new ProductNotFoundException("Product not found.");
+    }
+  }
+
+  public void reduceQuantity(Product product, int quantity) throws InsufficientStockException {
+    if (product.reduceQuantity(quantity)) {
+      productRepository.save(product);
+    } else {
+      throw new InsufficientStockException("Insufficient stock.");
+    }
   }
 
   //MockData -> saveProduct to save one product
