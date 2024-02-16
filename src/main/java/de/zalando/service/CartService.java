@@ -1,22 +1,44 @@
 package de.zalando.service;
 
+import de.zalando.dto.CartResponse;
+import de.zalando.exception.InsufficientStockException;
+import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.CartItem;
 import de.zalando.model.entities.Product;
+import de.zalando.model.entities.User;
 import de.zalando.model.repositories.CartRepository;
-import java.util.List;
+import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
 
-  CartRepository cartRepository;
+  private final CartRepository cartRepository;
+  private final ProductService productService;
 
-  @Autowired
-  public CartService(CartRepository cartRepository) {
-    this.cartRepository = cartRepository;
+  @Transactional
+  public CartResponse addProductToCart(User user, Long productId, int quantity)
+      throws ProductNotFoundException, InsufficientStockException {
+    Product product = productService.getProductByProductIdAndArchivedIsFalse(productId);
+    productService.reduceQuantity(product, quantity);
+
+    Optional<CartItem> cartItemExists = cartRepository.getCartItemsByCustomerAndProduct(user,
+        product);
+    if (cartItemExists.isPresent()) {
+      CartItem cartItem = cartItemExists.get();
+      cartItem.addQuantity(quantity);
+      cartRepository.save(cartItem);
+    } else {
+      cartRepository.save(new CartItem(quantity, product, user));
+    }
+    return getCartItemsByCustomer(user);
+  }
+
+  public CartResponse getCartItemsByCustomer(User user) {
+    return new CartResponse(cartRepository.getCartItemsByCustomer(user));
   }
 
   //MockData -> saveCart

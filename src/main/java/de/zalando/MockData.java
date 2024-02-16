@@ -21,8 +21,8 @@ public class MockData {
   @PostConstruct
   public void addMockData() {
 
-    User adminUser = new User(1L, "Admin first name", "Admin last name", "admin@gmail.com", "123456", Role.ADMIN, false);
-    User customer = new User(2L, "Customer first name", "Customer last name", "customer@gmail.com", "123456", Role.CUSTOMER, false);
+    User adminUser = new User(1L, "Julia", "Baptista", "julia@gmail.com", "123456", Role.ADMIN, false);
+    User customer = new User(2L, "Fernanda", "Brugger", "fernanda@gmail.com", "123456", Role.CUSTOMER, false);
 
     Product product1 = new Product("Product One", "Product One description", 19.99,10, adminUser );
     Product product2 = new Product("Product Two", "Product Two description", 29.99,20, adminUser );

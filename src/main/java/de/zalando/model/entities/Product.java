@@ -18,8 +18,12 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "product")
-@Setter @Getter @NoArgsConstructor @AllArgsConstructor
-@ToString @EqualsAndHashCode
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class Product {
 
   @Id
@@ -49,5 +53,14 @@ public class Product {
     this.productPrice = productPrice;
     this.stockQuantity = stockQuantity;
     this.admin = admin;
+  }
+
+  public boolean reduceQuantity(int quantity) {
+    if (this.stockQuantity < quantity) {
+      return false;
+    } else {
+      this.stockQuantity -= quantity;
+      return true;
+    }
   }
 }
