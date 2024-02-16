@@ -20,14 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class CartController {
 
-  CartService cartService;
-  UserService userService;
-
-@Autowired
-  public CartController(CartService cartService, UserService userService) {
-    this.cartService = cartService;
-    this.userService = userService;
-  }
+  private final CartService cartService;
+  private final UserService userService;
 
   @GetMapping
   @PreAuthorize("hasRole('CUSTOMER')")
