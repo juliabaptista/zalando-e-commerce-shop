@@ -20,12 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
 
-  ProductRepository productRepository;
-
-  @Autowired
-  public ProductService(ProductRepository productRepository) {
-    this.productRepository = productRepository;
-  }
+  private final ProductRepository productRepository;
 
   public Page<Product> getAllByArchivedIsFalse(int page, int size) {
     PageRequest request = PageRequest.of(page, size);
