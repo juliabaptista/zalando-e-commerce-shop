@@ -1,14 +1,20 @@
 package de.zalando.service;
 
+<<<<<<< HEAD
+=======
+import de.zalando.dto.ProductRequest;
+import de.zalando.exception.DuplicateProductException;
+import de.zalando.exception.InsufficientStockException;
+>>>>>>> 58b08e3 ([PXZ-73] Implement POST, PUT and DELETE endpoints)
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
+import de.zalando.model.entities.User;
 import de.zalando.model.repositories.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -44,7 +50,62 @@ public class ProductService {
     Optional<Product> optionalProduct = productRepository.findById(productId);
     if (optionalProduct.isPresent()) {
       return optionalProduct.get();
-    } else throw new ProductNotFoundException("Product not found.");
+    } else {
+      throw new ProductNotFoundException("Product not found.");
+    }
+  }
+
+  public Product addProduct(User user, ProductRequest productRequest)
+      throws DuplicateProductException {
+    Optional<Product> optionalProduct = productRepository.getProductsByAdminAndProductNameContainingIgnoreCase(
+        user, productRequest.getProductName());
+    if (optionalProduct.isEmpty()) {
+      return productRepository.save(new Product(
+          productRequest.getProductName(),
+          productRequest.getProductDescription(),
+          productRequest.getProductPrice(),
+          productRequest.getStockQuantity(),
+          user
+      ));
+    } else {
+      throw new DuplicateProductException("Product name already exists for this user.");
+    }
+  }
+
+  public Product updateProduct(User user, Long productId, ProductRequest productRequest)
+      throws ProductNotFoundException {
+    Optional<Product> optionalProduct = productRepository.getProductByAdminAndProductId(user,
+        productId);
+    if (optionalProduct.isPresent()) {
+      Product product = optionalProduct.get();
+      product.setProductName(productRequest.getProductName());
+      product.setProductDescription(productRequest.getProductDescription());
+      product.setProductPrice(productRequest.getProductPrice());
+      product.setStockQuantity(product.getStockQuantity());
+      return productRepository.save(product);
+    } else {
+      throw new ProductNotFoundException("Product not found.");
+    }
+  }
+
+  public Product archiveProduct(User user, Long productId) throws ProductNotFoundException {
+    Optional<Product> optionalProduct = productRepository.getProductByAdminAndProductId(user,
+        productId);
+    if (optionalProduct.isPresent()) {
+      Product product = optionalProduct.get();
+      product.setArchived(true);
+      return productRepository.save(product);
+    } else {
+      throw new ProductNotFoundException("Product not found.");
+    }
+  }
+
+  public void reduceQuantity(Product product, int quantity) throws InsufficientStockException {
+    if (product.reduceQuantity(quantity)) {
+      productRepository.save(product);
+    } else {
+      throw new InsufficientStockException("Insufficient stock.");
+    }
   }
 
   //MockData -> saveProduct to save one product
