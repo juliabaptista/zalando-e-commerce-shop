@@ -68,6 +68,6 @@ public User getUserByEmail(String email) throws UserNotFoundException {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.getUserByEmail(username).get();
     return new org.springframework.security.core.userdetails.User(
-        user.getEmail(), user.getPassword(), new ArrayList<>());
+        user.getEmail(), user.getPassword(), user.getRole().getGrantedAuthorities());
   }
 }

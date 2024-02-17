@@ -1,11 +1,9 @@
 package de.zalando.service;
 
-<<<<<<< HEAD
-=======
 import de.zalando.dto.ProductRequest;
 import de.zalando.exception.DuplicateProductException;
 import de.zalando.exception.InsufficientStockException;
->>>>>>> 58b08e3 ([PXZ-73] Implement POST, PUT and DELETE endpoints)
+import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
 import de.zalando.model.entities.User;
@@ -23,22 +21,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
 
-  ProductRepository productRepository;
-
-  @Autowired
-  public ProductService(ProductRepository productRepository) {
-    this.productRepository = productRepository;
-  }
+  private final ProductRepository productRepository;
 
   public Page<Product> getAllByArchivedIsFalse(int page, int size) {
     PageRequest request = PageRequest.of(page, size);
     return productRepository.getAllByArchivedIsFalse(request);
   }
 
-  public Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(String keyword, int page, int size)
+  public Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(String keyword,
+      int page, int size)
       throws ProductNotFoundException {
     PageRequest request = PageRequest.of(page, size);
-    Page<Product> products = productRepository.getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(keyword, request);
+    Page<Product> products = productRepository.getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(
+        keyword, request);
     if (products.isEmpty()) {
       throw new ProductNotFoundException("No products found with the keyword: " + keyword);
     } else {
@@ -46,7 +41,8 @@ public class ProductService {
     }
   }
 
-  public Product getProductByProductIdAndArchivedIsFalse(Long productId) throws ProductNotFoundException {
+  public Product getProductByProductIdAndArchivedIsFalse(Long productId)
+      throws ProductNotFoundException {
     Optional<Product> optionalProduct = productRepository.findById(productId);
     if (optionalProduct.isPresent()) {
       return optionalProduct.get();
