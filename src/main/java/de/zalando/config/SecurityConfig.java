@@ -35,6 +35,9 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
+        .exceptionHandling()
+        .accessDeniedHandler(new CustomAccessDeniedHandler())
+        .and()
         .authorizeHttpRequests(auth -> {
               auth
                   .requestMatchers("/*/register", "/*/error", "/*/login")

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -77,6 +78,7 @@ public class ProductController {
     }
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<?> addNewProduct(
       @Validated @RequestBody ProductRequest productRequest,
@@ -98,6 +100,7 @@ public class ProductController {
     return ResponseEntity.created(uri).body(product);
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{product-id}")
   public ResponseEntity<?> updateProduct(
       @PathVariable("product-id") Long productId,
@@ -116,6 +119,7 @@ public class ProductController {
     return ResponseEntity.ok(product);
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{product-id}")
   public ResponseEntity<?> deleteProduct(
       @PathVariable("product-id") Long productId,
