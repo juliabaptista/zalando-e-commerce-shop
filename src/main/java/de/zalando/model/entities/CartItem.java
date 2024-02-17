@@ -43,8 +43,4 @@ public class CartItem {
     this.product = product;
     this.customer = customer;
   }
-
-  public void addQuantity(int quantity) {
-    this.quantity += quantity;
-  }
 }

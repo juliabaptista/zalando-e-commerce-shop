@@ -95,14 +95,6 @@ public class ProductService {
     }
   }
 
-  public void reduceQuantity(Product product, int quantity) throws InsufficientStockException {
-    if (product.reduceQuantity(quantity)) {
-      productRepository.save(product);
-    } else {
-      throw new InsufficientStockException("Insufficient stock.");
-    }
-  }
-
   //MockData -> saveProduct to save one product
   public Product saveProduct(Product product) {
     return productRepository.save(product);

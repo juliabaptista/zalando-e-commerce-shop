@@ -54,13 +54,4 @@ public class Product {
     this.stockQuantity = stockQuantity;
     this.admin = admin;
   }
-
-  public boolean reduceQuantity(int quantity) {
-    if (this.stockQuantity < quantity) {
-      return false;
-    } else {
-      this.stockQuantity -= quantity;
-      return true;
-    }
-  }
 }
