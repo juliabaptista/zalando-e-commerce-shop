@@ -1,15 +1,8 @@
 package de.zalando.controller;
 
-import de.zalando.dto.ProductRequest;
-import de.zalando.exception.ApiError;
-import de.zalando.exception.DuplicateProductException;
 import de.zalando.exception.ProductNotFoundException;
-import de.zalando.exception.UserNotFoundException;
 import de.zalando.model.entities.Product;
-import de.zalando.model.entities.User;
 import de.zalando.service.ProductService;
-import de.zalando.service.UserService;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,13 +15,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/products")
@@ -36,11 +25,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class ProductController {
 
   ProductService productService;
-  UserService userService;
+
   @Autowired
-  public ProductController(ProductService productService, UserService userService) {
+  public ProductController(ProductService productService) {
     this.productService = productService;
-    this.userService = userService;
   }
 
   @GetMapping
@@ -62,8 +50,7 @@ public class ProductController {
           productService.getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(keyword, page,
               size));
     } catch (ProductNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 
@@ -73,8 +60,7 @@ public class ProductController {
     try {
       return ResponseEntity.ok(productService.getProductByProductIdAndArchivedIsFalse(productId));
     } catch (ProductNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 
