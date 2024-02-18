@@ -20,14 +20,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-  UserRepository userRepository;
-  PasswordEncoder passwordEncoder;
-
-  @Autowired
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-  }
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
 public User getUserByEmail(String email) throws UserNotFoundException {
   Optional<User> optionalUser = userRepository.getUserByEmail(email);

@@ -41,9 +41,8 @@ public class Product {
   @Column(name = "is_archived")
   private boolean archived;
 
-  @JsonIgnore
   @ManyToOne
-  @JoinColumn(name = "admin")
+  @JoinColumn(name = "admin", referencedColumnName = "user_id")
   private User admin;
 
   public Product(String productName, String productDescription, double productPrice,

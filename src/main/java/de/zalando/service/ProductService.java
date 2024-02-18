@@ -94,14 +94,4 @@ public class ProductService {
       throw new ProductNotFoundException("Product not found.");
     }
   }
-
-  //MockData -> saveProduct to save one product
-  public Product saveProduct(Product product) {
-    return productRepository.save(product);
-  }
-
-  //MockData -> saveAll to save a list of products
-  public List<Product> saveAll(List<Product> products) {
-    return productRepository.saveAll(products);
-  }
 }

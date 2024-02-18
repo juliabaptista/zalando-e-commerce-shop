@@ -74,9 +74,4 @@ public class CartService {
     } else throw new ProductNotFoundException("Product not found for user's cart");
     return getCartItemsByCustomer(user);
   }
-
-  //MockData -> saveCart
-  public CartItem saveItem(CartItem cartItem) {
-    return cartRepository.save(cartItem);
-  }
 }
