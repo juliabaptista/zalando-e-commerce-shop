@@ -19,6 +19,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -95,13 +96,19 @@ public class OrderService {
     }
   }
 
-
   @Transactional
-  public void updateOrderStatus(Long orderId, OrderStatus newStatus) throws OrderNotFoundException {
+  public Order updateOrderStatus(Long orderId, OrderStatus newStatus)
+      throws OrderNotFoundException, InvalidOrderStatusException {
     Order order = orderRepository.getOrderByOrderId(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderId));
 
+    if (!OrderStatus.containsIgnoreCase(newStatus.name())) {
+      throw new InvalidOrderStatusException("Invalid order status: " + newStatus);
+    }
+
     order.setStatus(newStatus);
     orderRepository.save(order);
+
+    return order;
   }
 }
