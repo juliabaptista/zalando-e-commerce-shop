@@ -3,10 +3,10 @@ package de.zalando.controller;
 import de.zalando.exception.ApiError;
 import de.zalando.exception.EmptyCartException;
 import de.zalando.exception.InsufficientStockException;
+import de.zalando.exception.InvalidOrderStatusException;
 import de.zalando.exception.OrderNotFoundException;
 import de.zalando.exception.UserNotFoundException;
 import de.zalando.model.entities.Order;
-import de.zalando.model.entities.User;
 import de.zalando.service.OrderService;
 import de.zalando.service.UserService;
 import java.net.URI;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -63,6 +64,21 @@ public class OrderController {
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
           .body(new ApiError(HttpStatus.NOT_ACCEPTABLE, e.getMessage()));
     }
+  }
 
+  @PreAuthorize("hasRole('CUSTOMER')")
+  @GetMapping("/my-orders")
+  public ResponseEntity<?> getOrdersByUser(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestParam(name = "orderStatus", required = false) String orderStatus,
+      @RequestParam(name = "page", defaultValue = "0") int page,
+      @RequestParam(name = "size", defaultValue = "10") int size
+  ) {
+    try {
+      return ResponseEntity.ok(orderService.getOrdersByUser(userService.getUserByEmail(userDetails.getUsername()), orderStatus, page, size));
+    } catch (UserNotFoundException | OrderNotFoundException | InvalidOrderStatusException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
   }
 }
