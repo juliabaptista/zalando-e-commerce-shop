@@ -10,8 +10,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-
+  // CUSTOMER queries
   Optional<Product> getProductByProductIdAndArchivedIsFalse(Long productId);
   Page<Product> getAllByArchivedIsFalse(Pageable pageable);
   Page<Product> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase (String productName, Pageable pageable);
+
+  // ADMIN queries
+  List<Product> getProductsByAdminAndArchivedIsFalse(User user);
+  Optional<Product> getProductsByAdminAndArchived(User user, boolean archived);
+  Optional<Product> getProductByAdminAndProductId(User user, Long productId);
+  Optional<Product> getProductsByAdminAndProductNameContainingIgnoreCase(User user, String productName);
 }

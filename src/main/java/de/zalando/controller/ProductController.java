@@ -1,8 +1,15 @@
 package de.zalando.controller;
 
+import de.zalando.dto.ProductRequest;
+import de.zalando.exception.ApiError;
+import de.zalando.exception.DuplicateProductException;
 import de.zalando.exception.ProductNotFoundException;
+import de.zalando.exception.UserNotFoundException;
 import de.zalando.model.entities.Product;
+import de.zalando.model.entities.User;
 import de.zalando.service.ProductService;
+import de.zalando.service.UserService;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,21 +21,21 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
 
-  ProductService productService;
-
-  @Autowired
-  public ProductController(ProductService productService) {
-    this.productService = productService;
-  }
+  private final ProductService productService;
+  private final UserService userService;
 
   @GetMapping
   public ResponseEntity<Page<Product>> getAllByArchivedIsFalse(

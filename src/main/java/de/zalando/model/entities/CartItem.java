@@ -37,6 +37,10 @@ public class CartItem {
   @JoinColumn(name = "customer_id")
   private User customer;
 
+  @ManyToOne
+  @JoinColumn(name = "order_id")
+  private Order order;
+
   public CartItem(int quantity, Product product, User customer) {
     this.id=new CartId(product.getProductId(), customer.getUserId());
     this.quantity = quantity;

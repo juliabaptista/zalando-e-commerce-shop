@@ -1,8 +1,11 @@
 package de.zalando.service;
 
+import de.zalando.dto.ProductRequest;
+import de.zalando.exception.DuplicateProductException;
 import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
+import de.zalando.model.entities.User;
 import de.zalando.model.repositories.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
 
-  ProductRepository productRepository;
-
-  @Autowired
-  public ProductService(ProductRepository productRepository) {
-    this.productRepository = productRepository;
-  }
+  private final ProductRepository productRepository;
 
   public Page<Product> getAllByArchivedIsFalse(int page, int size) {
     PageRequest request = PageRequest.of(page, size);
@@ -98,13 +96,7 @@ public class ProductService {
     }
   }
 
-  //MockData -> saveProduct to save one product
-  public Product saveProduct(Product product) {
-    return productRepository.save(product);
-  }
-
-  //MockData -> saveAll to save a list of products
-  public List<Product> saveAll(List<Product> products) {
-    return productRepository.saveAll(products);
+  public int getProductStock(Product product) {
+    return (product != null) ? product.getStockQuantity() : 0;
   }
 }
