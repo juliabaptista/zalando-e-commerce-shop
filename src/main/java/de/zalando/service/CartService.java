@@ -6,6 +6,7 @@ import de.zalando.exception.DuplicateProductException;
 import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.CartItem;
+import de.zalando.model.entities.Order;
 import de.zalando.model.entities.Product;
 import de.zalando.model.entities.User;
 import de.zalando.model.repositories.CartRepository;
@@ -74,4 +75,22 @@ public class CartService {
     } else throw new ProductNotFoundException("Product not found for user's cart");
     return getCartItemsByCustomer(user);
   }
+
+  @Transactional
+  public void updateCartItemsForOrder(CartResponse cartResponse, Order order) {
+    for (CartItem cartItem : cartResponse.getCartItems()) {
+      cartItem.setOrder(order);
+      cartRepository.save(cartItem);
+    }
+  }
+
+  @Transactional
+  public void clearCart(CartResponse cartResponse) {
+    for (CartItem cartItem : cartResponse.getCartItems()) {
+      cartRepository.delete(cartItem);
+    }
+    cartResponse.getCartItems().clear();
+  }
+
+
 }
