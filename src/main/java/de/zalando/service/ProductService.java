@@ -1,6 +1,7 @@
 package de.zalando.service;
 
 import de.zalando.exception.InsufficientStockException;
+import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
 import de.zalando.model.repositories.ProductRepository;

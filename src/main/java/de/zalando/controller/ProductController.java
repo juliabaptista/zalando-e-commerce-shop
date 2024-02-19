@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
   private final ProductService productService;
+  private final UserService userService;
 
   @GetMapping
   public ResponseEntity<Page<Product>> getAllByArchivedIsFalse(
@@ -60,7 +61,66 @@ public class ProductController {
     try {
       return ResponseEntity.ok(productService.getProductByProductIdAndArchivedIsFalse(productId));
     } catch (ProductNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PostMapping
+  public ResponseEntity<?> addNewProduct(
+      @Validated @RequestBody ProductRequest productRequest,
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    User user;
+    Product product;
+    try {
+      user = userService.getUserByEmail(userDetails.getUsername());
+      product = productService.addProduct(user, productRequest);
+    } catch (UserNotFoundException | DuplicateProductException e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+          .body(new ApiError(HttpStatus.NOT_ACCEPTABLE, e.getMessage()));
+    }
+    URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+        .path("/{product-id}")
+        .buildAndExpand(product.getProductId())
+        .toUri();
+    return ResponseEntity.created(uri).body(product);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PutMapping("/{product-id}")
+  public ResponseEntity<?> updateProduct(
+      @PathVariable("product-id") Long productId,
+      @Validated @RequestBody ProductRequest productRequest,
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    User user;
+    Product product;
+    try {
+      user = userService.getUserByEmail(userDetails.getUsername());
+      product = productService.updateProduct(user, productId, productRequest);
+    } catch (UserNotFoundException | ProductNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+          .body(new ApiError(HttpStatus.NOT_ACCEPTABLE, e.getMessage()));
+    }
+    return ResponseEntity.ok(product);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @DeleteMapping("/{product-id}")
+  public ResponseEntity<?> deleteProduct(
+      @PathVariable("product-id") Long productId,
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    User user;
+    Product product;
+    try {
+      user = userService.getUserByEmail(userDetails.getUsername());
+      product = productService.archiveProduct(user, productId);
+    } catch (UserNotFoundException | ProductNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+          .body(new ApiError(HttpStatus.NOT_ACCEPTABLE, e.getMessage()));
     }
   }
 }
