@@ -2,10 +2,7 @@ package de.zalando.service;
 
 import de.zalando.dto.ProductRequest;
 import de.zalando.exception.DuplicateProductException;
-<<<<<<< HEAD
-=======
 import de.zalando.exception.InsufficientStockException;
->>>>>>> 412fa510b1afdb5b3f443828228da190b396c164
 import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
