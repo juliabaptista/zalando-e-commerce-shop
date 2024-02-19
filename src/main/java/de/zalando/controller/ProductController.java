@@ -35,13 +35,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequiredArgsConstructor
 public class ProductController {
 
-  ProductService productService;
-  UserService userService;
-  @Autowired
-  public ProductController(ProductService productService, UserService userService) {
-    this.productService = productService;
-    this.userService = userService;
-  }
+  private final ProductService productService;
+  private final UserService userService;
 
   @GetMapping
   public ResponseEntity<Page<Product>> getAllByArchivedIsFalse(
