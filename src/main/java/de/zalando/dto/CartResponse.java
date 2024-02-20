@@ -16,7 +16,8 @@ public class CartResponse {
   private List<CartItem> cartItems;
   private double totalPrice;
 
-  public CartResponse(List<CartItem> cartItems) {
+  public CartResponse(String message, List<CartItem> cartItems) {
+    this.message = message;
     this.cartItems = cartItems;
     this.totalPrice = cartItems
           .stream()
