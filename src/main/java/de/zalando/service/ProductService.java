@@ -49,13 +49,54 @@ public class ProductService {
     }
   }
 
-  //MockData -> saveProduct to save one product
-  public Product saveProduct(Product product) {
-    return productRepository.save(product);
+
+  public Product addProduct(User user, ProductRequest productRequest)
+      throws DuplicateProductException {
+    Optional<Product> optionalProduct = productRepository.getProductsByAdminAndProductNameContainingIgnoreCase(
+        user, productRequest.getProductName());
+    if (optionalProduct.isEmpty()) {
+      return productRepository.save(new Product(
+          productRequest.getProductName(),
+          productRequest.getProductDescription(),
+          productRequest.getProductPrice(),
+          productRequest.getStockQuantity(),
+          user
+      ));
+    } else {
+      throw new DuplicateProductException("Product name already exists for this user.");
+    }
   }
 
-  //MockData -> saveAll to save a list of products
-  public List<Product> saveAll(List<Product> products) {
-    return productRepository.saveAll(products);
+  public Product updateProduct(User user, Long productId, ProductRequest productRequest)
+      throws ProductNotFoundException {
+    Optional<Product> optionalProduct = productRepository.getProductByAdminAndProductId(user,
+        productId);
+    if (optionalProduct.isPresent()) {
+      Product product = optionalProduct.get();
+      product.setProductName(productRequest.getProductName());
+      product.setProductDescription(productRequest.getProductDescription());
+      product.setProductPrice(productRequest.getProductPrice());
+      product.setStockQuantity(product.getStockQuantity());
+      return productRepository.save(product);
+    } else {
+      throw new ProductNotFoundException("Product not found.");
+    }
+  }
+
+  public Product archiveProduct(User user, Long productId) throws ProductNotFoundException {
+    Optional<Product> optionalProduct = productRepository.getProductByAdminAndProductId(user,
+        productId);
+    if (optionalProduct.isPresent()) {
+      Product product = optionalProduct.get();
+      product.setArchived(true);
+      return productRepository.save(product);
+    } else {
+      throw new ProductNotFoundException("Product not found.");
+    }
+  }
+
+  public int getProductStock(Product product) {
+    return (product != null) ? product.getStockQuantity() : 0;
+
   }
 }

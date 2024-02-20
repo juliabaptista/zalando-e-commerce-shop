@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -61,12 +60,10 @@ public class ProductController {
     try {
       return ResponseEntity.ok(productService.getProductByProductIdAndArchivedIsFalse(productId));
     } catch (ProductNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<?> addNewProduct(
       @Validated @RequestBody ProductRequest productRequest,
@@ -88,7 +85,6 @@ public class ProductController {
     return ResponseEntity.created(uri).body(product);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{product-id}")
   public ResponseEntity<?> updateProduct(
       @PathVariable("product-id") Long productId,
@@ -107,7 +103,6 @@ public class ProductController {
     return ResponseEntity.ok(product);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{product-id}")
   public ResponseEntity<?> deleteProduct(
       @PathVariable("product-id") Long productId,

@@ -43,7 +43,7 @@ public class Product {
 
   @JsonIgnore
   @ManyToOne
-  @JoinColumn(name = "admin")
+  @JoinColumn(name = "admin_id")
   private User admin;
 
   public Product(String productName, String productDescription, double productPrice,
