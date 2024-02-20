@@ -2,7 +2,6 @@ package de.zalando.config;
 
 import de.zalando.filter.JwtAuthenticationFilter;
 import de.zalando.model.entities.Role;
-import de.zalando.model.entities.UserPermissions;
 import de.zalando.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +34,9 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
+        .exceptionHandling()
+        .accessDeniedHandler(new CustomAccessDeniedHandler())
+        .and()
         .authorizeHttpRequests(auth -> {
               auth
                   .requestMatchers("/*/register", "/*/error", "/*/login")
