@@ -7,6 +7,7 @@ import de.zalando.exception.InvalidOrderStatusException;
 import de.zalando.exception.OrderNotFoundException;
 import de.zalando.exception.UserNotFoundException;
 import de.zalando.model.entities.Order;
+import de.zalando.model.entities.OrderStatus;
 import de.zalando.exception.OrderNotFoundException;
 import de.zalando.exception.UserNotFoundException;
 import de.zalando.model.entities.Order;
@@ -21,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +65,8 @@ public class OrderController {
       @PathVariable("order-id") Long orderId
   ) {
     try {
-      return ResponseEntity.ok(orderService.getOrderByCustomerAndOrderId(userService.getUserByEmail(userDetails.getUsername()), orderId));
+      return ResponseEntity.ok(orderService.getOrderByCustomerAndOrderId(
+          userService.getUserByEmail(userDetails.getUsername()), orderId));
     } catch (OrderNotFoundException | UserNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
           .body(new ApiError(HttpStatus.NOT_ACCEPTABLE, e.getMessage()));
@@ -79,8 +82,26 @@ public class OrderController {
       @RequestParam(name = "size", defaultValue = "10") int size
   ) {
     try {
-      return ResponseEntity.ok(orderService.getOrdersByUser(userService.getUserByEmail(userDetails.getUsername()), orderStatus, page, size));
+      return ResponseEntity.ok(
+          orderService.getOrdersByUser(userService.getUserByEmail(userDetails.getUsername()),
+              orderStatus, page, size));
     } catch (UserNotFoundException | OrderNotFoundException | InvalidOrderStatusException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PatchMapping("/{order-id}/update-status")
+  public ResponseEntity<?> updateOrderStatus(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable("order-id") Long orderId,
+      @RequestParam("newStatus") OrderStatus newStatus
+  ) {
+    try {
+      Order updatedOrder = orderService.updateOrderStatus(orderId, newStatus);
+      return ResponseEntity.ok(updatedOrder);
+    } catch (OrderNotFoundException | InvalidOrderStatusException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
           .body(new ApiError(HttpStatus.NOT_FOUND, e.getMessage()));
     }
