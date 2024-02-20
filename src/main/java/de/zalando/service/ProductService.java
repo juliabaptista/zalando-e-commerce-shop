@@ -97,6 +97,5 @@ public class ProductService {
 
   public int getProductStock(Product product) {
     return (product != null) ? product.getStockQuantity() : 0;
-
   }
 }

@@ -3,6 +3,16 @@ package de.zalando.service;
 import de.zalando.dto.CartResponse;
 import de.zalando.exception.EmptyCartException;
 import de.zalando.exception.InsufficientStockException;
+import de.zalando.exception.InvalidOrderStatusException;
+import de.zalando.exception.OrderNotFoundException;
+import de.zalando.exception.ProductNotFoundException;
+import de.zalando.model.entities.CartItem;
+import de.zalando.model.entities.Order;
+import de.zalando.model.entities.OrderStatus;
+import de.zalando.model.entities.Product;
+import de.zalando.model.entities.User;
+import de.zalando.model.repositories.OrderRepository;
+import de.zalando.model.repositories.ProductRepository;
 import de.zalando.exception.OrderNotFoundException;
 import de.zalando.model.entities.CartItem;
 import de.zalando.model.entities.Order;
@@ -13,6 +23,8 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -62,8 +74,31 @@ public class OrderService {
         .orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderId));
   }
 
-  public List<Order> getOrdersByUser(User user) {
-    return orderRepository.getOrdersByCustomer(user);
+  public Page<Order> getOrdersByUser(User user, String orderStatus, int page, int size)
+      throws OrderNotFoundException, InvalidOrderStatusException {
+
+    PageRequest request = PageRequest.of(page, size);
+    Page<Order> orders;
+
+    String upperCaseOrderStatus = orderStatus != null ? orderStatus.toUpperCase() : null;
+
+    if (upperCaseOrderStatus != null && !OrderStatus.containsIgnoreCase(upperCaseOrderStatus)) {
+      throw new InvalidOrderStatusException("Invalid order status: " + orderStatus);
+    }
+
+    OrderStatus status = OrderStatus.fromStringIgnoreCase(upperCaseOrderStatus);
+
+    if (status != null) {
+      orders = orderRepository.getOrdersByCustomerAndStatus(user, status, request);
+    } else {
+      orders = orderRepository.getOrdersByCustomer(user, request);
+    }
+
+    if (orders.isEmpty()) {
+      throw new OrderNotFoundException("No orders found for the user: " + user.getFirstName());
+    } else {
+      return orders;
+    }
   }
 
   @Transactional
@@ -74,8 +109,4 @@ public class OrderService {
     order.setStatus(newStatus);
     orderRepository.save(order);
   }
-
-
-
 }
-
