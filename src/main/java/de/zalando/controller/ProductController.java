@@ -11,7 +11,6 @@ import de.zalando.service.ProductService;
 import de.zalando.service.UserService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
