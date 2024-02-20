@@ -43,6 +43,7 @@ public class Product {
 
   @ManyToOne
   @JoinColumn(name = "admin", referencedColumnName = "user_id")
+  @JoinColumn(name = "admin_id")
   private User admin;
 
   public Product(String productName, String productDescription, double productPrice,
