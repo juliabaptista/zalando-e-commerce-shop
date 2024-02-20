@@ -1,17 +1,16 @@
 package de.zalando.service;
 
-import de.zalando.dto.ProductRequest;
-import de.zalando.exception.DuplicateProductException;
+import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.InsufficientStockException;
 import de.zalando.exception.ProductNotFoundException;
 import de.zalando.model.entities.Product;
-import de.zalando.model.entities.User;
 import de.zalando.model.repositories.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -49,6 +48,7 @@ public class ProductService {
       throw new ProductNotFoundException("Product not found.");
     }
   }
+
 
   public Product addProduct(User user, ProductRequest productRequest)
       throws DuplicateProductException {
@@ -93,5 +93,10 @@ public class ProductService {
     } else {
       throw new ProductNotFoundException("Product not found.");
     }
+  }
+
+  public int getProductStock(Product product) {
+    return (product != null) ? product.getStockQuantity() : 0;
+
   }
 }
