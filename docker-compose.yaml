@@ -7,3 +7,23 @@ services:
       - 3307:3306
     environment:
       MYSQL_ROOT_PASSWORD: Julia1770!
+
+    networks:
+      - ecommerce-network
+
+  ecommerce:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      MYSQL_ROOT_PASSWORD: Julia1770!
+      MYSQL_URL: jdbc:mysql://mysql:3307/ecommercedb
+
+    depends_on:
+      - mysql
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
