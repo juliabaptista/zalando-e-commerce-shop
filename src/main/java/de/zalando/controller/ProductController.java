@@ -9,6 +9,9 @@ import de.zalando.model.entities.Product;
 import de.zalando.model.entities.User;
 import de.zalando.service.ProductService;
 import de.zalando.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,11 +35,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@Tag(name = "Products", description = "Product Management")
 public class ProductController {
 
   private final ProductService productService;
   private final UserService userService;
 
+  @Operation(summary = "Get all active products.", description = "Returns all active products in paginated view.")
   @GetMapping
   public ResponseEntity<Page<Product>> getAllByArchivedIsFalse(
       @RequestParam(value = "page", defaultValue = "0") int page,
@@ -45,6 +50,7 @@ public class ProductController {
     return ResponseEntity.ok(productService.getAllByArchivedIsFalse(page, size));
   }
 
+  @Operation(summary = "Search products by keyword.", description = "Returns all active products matching the keyword in paginated view.")
   @GetMapping("/search")
   public ResponseEntity<?> getAllByArchivedIsFalseAndProductNameContainingIgnoreCase(
       @RequestParam("keyword") String keyword,
@@ -61,6 +67,7 @@ public class ProductController {
     }
   }
 
+  @Operation(summary = "Get product by ID.", description = "Returns the details of a specific product by its ID.")
   @GetMapping("/{id}")
   public ResponseEntity<?> getProductByProductIdAndArchivedIsFalse(
       @PathVariable("id") Long productId) {
@@ -72,6 +79,8 @@ public class ProductController {
     }
   }
 
+  @Operation(summary = "Add a new product to the database.", description = "Allows users with ADMIN role to create a new product.",
+      security = { @SecurityRequirement(name = "bearer-key") })
   @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<?> addNewProduct(
